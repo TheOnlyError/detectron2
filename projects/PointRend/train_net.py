@@ -138,8 +138,8 @@ if __name__ == "__main__":
     print("Command Line Args:", args)
     launch(
         main,
-        args.num_gpus,
-        num_machines=args.num_machines,
+        1,
+        num_machines=1,
         machine_rank=args.machine_rank,
         dist_url=args.dist_url,
         args=(args,),
