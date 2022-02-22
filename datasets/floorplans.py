@@ -229,7 +229,7 @@ if __name__ == "__main__":
     dirname = "cityscapes-data-vis"
     os.makedirs(dirname, exist_ok=True)
 
-    dicts = load_semantic()
+    dicts = load_semantic('val')
     logger.info("Done loading {} samples.".format(len(dicts)))
 
     stuff_classes = ['background', 'opening', 'wall']
