@@ -253,19 +253,9 @@ class SemSegFPNHead(nn.Module):
             mode="bilinear",
             align_corners=False,
         )
-        print(targets.min(), targets.max())
-        print(targets.min(), targets.max())
-        print(targets.min(), targets.max())
-        print(targets.min(), targets.max())
-        print(targets.min(), targets.max())
-        print(targets.min(), targets.max())
-        print(targets.min(), targets.max())
-        print(targets.min(), targets.max())
-        print(targets.min(), targets.max())
-        print(targets.min(), targets.max())
-        print(targets.min(), targets.max())
-        print(targets.min(), targets.max())
-        print(targets.min(), targets.max())
+
+        targets = torch.reshape(targets, [512, 512])
+
         loss = F.cross_entropy(
             predictions, targets, reduction="mean", ignore_index=self.ignore_value
         )
