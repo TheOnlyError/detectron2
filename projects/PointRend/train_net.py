@@ -14,7 +14,7 @@ import detectron2.utils.comm as comm
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.config import get_cfg
 from detectron2.data import DatasetMapper, MetadataCatalog, build_detection_train_loader, DatasetCatalog
-from datasets.floorplans import load_semantic
+from floorplans import load_semantic
 from detectron2.engine import DefaultTrainer, default_argument_parser, default_setup, launch
 from detectron2.evaluation import (
     CityscapesInstanceEvaluator,
