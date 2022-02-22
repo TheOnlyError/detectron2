@@ -1,0 +1,16 @@
+_BASE_: Base-PointRend-Semantic-FPN.yaml
+DATASETS:
+  TRAIN: ("floorplans_sem_seg_train",)
+  TEST: ("floorplans_sem_seg_val",)
+SOLVER:
+  BASE_LR: 0.0001
+INPUT:
+  MIN_SIZE_TRAIN: (512,)
+  MIN_SIZE_TRAIN_SAMPLING: "choice"
+  MIN_SIZE_TEST: 512
+  MAX_SIZE_TRAIN: 512
+  MAX_SIZE_TEST: 512
+  RANDOM_FLIP: "none"
+  COLOR_AUG_SSD: False
+DATALOADER:
+  NUM_WORKERS: 10

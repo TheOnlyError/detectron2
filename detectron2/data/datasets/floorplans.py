@@ -20,7 +20,7 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
-def load_semantic():
+def load_semantic(subset):
     """
     Args:
         image_dir (str): path to the raw dataset. e.g., "~/cityscapes/leftImg8bit/train".
@@ -32,7 +32,8 @@ def load_semantic():
     """
     ret = []
 
-    path = "../../../rooms_augment_mask/"
+    subpath = '../../'
+    path = subpath + "rooms_augment_mask/"
     files = os.listdir(path)
     files_set = []
     for file in files:
@@ -41,14 +42,17 @@ def load_semantic():
     random.shuffle(files_set)
 
     train_size = int(0.8 * len(files_set))
-    files_set = files_set[:train_size]
+    if subset == 'train':
+        files_set = files_set[:train_size]
+    else:
+        files_set = files_set[train_size:]
     for image_id in files_set:
         id = int(image_id)
-        shp = mpimg.imread('../../../rooms_augment_mask/{}.jpg'.format(id)).shape
+        shp = mpimg.imread(subpath + 'rooms_augment_mask/{}.jpg'.format(id)).shape
         ret.append(
             {
-                "file_name": '../../../rooms_augment_mask/{}.jpg'.format(id),
-                "sem_seg_file_name": '../../../rooms_augment_mask/{}_mask.png'.format(id),
+                "file_name": subpath + 'rooms_augment_mask/{}.jpg'.format(id),
+                "sem_seg_file_name": subpath+ 'rooms_augment_mask/{}_mask.png'.format(id),
                 "height": shp[0],
                 "width": shp[1],
             }

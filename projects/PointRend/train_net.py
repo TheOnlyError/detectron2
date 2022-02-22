@@ -14,7 +14,8 @@ import detectron2.data.transforms as T
 import detectron2.utils.comm as comm
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.config import get_cfg
-from detectron2.data import DatasetMapper, MetadataCatalog, build_detection_train_loader
+from detectron2.data import DatasetMapper, MetadataCatalog, build_detection_train_loader, DatasetCatalog
+from detectron2.data.datasets.floorplans import load_semantic
 from detectron2.engine import DefaultTrainer, default_argument_parser, default_setup, launch
 from detectron2.evaluation import (
     CityscapesInstanceEvaluator,
@@ -117,6 +118,13 @@ def setup(args):
 
 def main(args):
     cfg = setup(args)
+
+    DatasetCatalog.register(
+        "floorplans_sem_seg_train", lambda subset='train': load_semantic(subset)
+    )
+    DatasetCatalog.register(
+        "floorplans_sem_seg_val", lambda subset='val': load_semantic(subset)
+    )
 
     if args.eval_only:
         model = Trainer.build_model(cfg)
