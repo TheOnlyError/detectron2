@@ -254,7 +254,7 @@ class SemSegFPNHead(nn.Module):
             align_corners=False,
         )
 
-        targets = torch.reshape(targets, [512, 512])
+        # targets = torch.reshape(targets, [1, 512, 512])
 
         loss = F.cross_entropy(
             predictions, targets, reduction="mean", ignore_index=self.ignore_value
