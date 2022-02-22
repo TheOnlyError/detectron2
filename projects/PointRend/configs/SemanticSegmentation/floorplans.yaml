@@ -13,6 +13,7 @@ DATASETS:
   TEST: ("floorplans_sem_seg_val",)
 SOLVER:
   BASE_LR: 0.0001
+  IMS_PER_BATCH: 1
 INPUT:
   MIN_SIZE_TRAIN: (512,)
   MIN_SIZE_TRAIN_SAMPLING: "choice"
