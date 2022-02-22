@@ -32,7 +32,7 @@ def load_semantic(subset):
     """
     ret = []
 
-    subpath = '../../'
+    subpath = ''
     path = subpath + "rooms_augment_mask/"
     files = os.listdir(path)
     files_set = []
