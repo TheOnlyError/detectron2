@@ -1,7 +1,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 import logging
-import os
+import os, sys
 import random
+
+# sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
 import matplotlib.image as mpimg
 import numpy as np
@@ -16,6 +18,8 @@ try:
 except ImportError:
     # OpenCV is an optional dependency at the moment
     pass
+
+print(os.listdir())
 
 logger = logging.getLogger(__name__)
 
@@ -32,8 +36,8 @@ def load_semantic(subset):
     """
     ret = []
 
-    subpath = '/222222222'
-    path = subpath + "rooms_augment_ma22222sk/"
+    subpath = ''
+    path = subpath + "rooms_augment_mask/"
     files = os.listdir(path)
     files_set = []
     for file in files:

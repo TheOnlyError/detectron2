@@ -9,6 +9,8 @@ This script is a simplified version of the training script in detectron2/tools.
 
 import os, sys
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+
 import detectron2.data.transforms as T
 import detectron2.utils.comm as comm
 from detectron2.checkpoint import DetectionCheckpointer
@@ -26,9 +28,6 @@ from detectron2.evaluation import (
     verify_results,
 )
 from detectron2.projects.point_rend import ColorAugSSDTransform, add_pointrend_config
-
-sys.path.append('')
-
 
 def build_sem_seg_train_aug(cfg):
     augs = [
