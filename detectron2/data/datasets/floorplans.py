@@ -32,8 +32,8 @@ def load_semantic(subset):
     """
     ret = []
 
-    subpath = ''
-    path = subpath + "rooms_augment_mask/"
+    subpath = '/222222222'
+    path = subpath + "rooms_augment_ma22222sk/"
     files = os.listdir(path)
     files_set = []
     for file in files:
@@ -52,7 +52,7 @@ def load_semantic(subset):
         ret.append(
             {
                 "file_name": subpath + 'rooms_augment_mask/{}.jpg'.format(id),
-                "sem_seg_file_name": subpath+ 'rooms_augment_mask/{}_mask.png'.format(id),
+                "sem_seg_file_name": subpath + 'rooms_augment_mask/{}_mask.png'.format(id),
                 "height": shp[0],
                 "width": shp[1],
             }
