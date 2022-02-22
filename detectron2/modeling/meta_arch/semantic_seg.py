@@ -253,6 +253,19 @@ class SemSegFPNHead(nn.Module):
             mode="bilinear",
             align_corners=False,
         )
+        print(targets.min(), targets.max())
+        print(targets.min(), targets.max())
+        print(targets.min(), targets.max())
+        print(targets.min(), targets.max())
+        print(targets.min(), targets.max())
+        print(targets.min(), targets.max())
+        print(targets.min(), targets.max())
+        print(targets.min(), targets.max())
+        print(targets.min(), targets.max())
+        print(targets.min(), targets.max())
+        print(targets.min(), targets.max())
+        print(targets.min(), targets.max())
+        print(targets.min(), targets.max())
         loss = F.cross_entropy(
             predictions, targets, reduction="mean", ignore_index=self.ignore_value
         )
