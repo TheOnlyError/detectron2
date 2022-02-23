@@ -14,10 +14,10 @@ DATASETS:
   TRAIN: ("floorplans_sem_seg_train",)
   TEST: ("floorplans_sem_seg_val",)
 SOLVER:
-  BASE_LR: 0.0001
+  BASE_LR: 0.001
   IMS_PER_BATCH: 1
   STEPS: (40000, 55000)
-  MAX_ITER: 100
+  MAX_ITER: 40000
 INPUT:
   MIN_SIZE_TRAIN: (512,)
   MIN_SIZE_TRAIN_SAMPLING: "choice"
