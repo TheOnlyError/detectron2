@@ -1,5 +1,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 import logging
+import os
+
 import numpy as np
 import pprint
 import sys
@@ -39,6 +41,8 @@ def verify_results(cfg, results):
     expected_results = cfg.TEST.EXPECTED_RESULTS
     if not len(expected_results):
         return True
+
+    print(os.listdir())
 
     ok = True
     for task, metric, expected, tolerance in expected_results:
