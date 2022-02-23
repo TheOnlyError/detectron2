@@ -1,7 +1,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
-import numpy as np
 from typing import Callable, Dict, Optional, Tuple, Union
+
 import fvcore.nn.weight_init as weight_init
+import numpy as np
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -10,10 +11,9 @@ from detectron2.config import configurable
 from detectron2.layers import Conv2d, ShapeSpec, get_norm
 from detectron2.structures import ImageList
 from detectron2.utils.registry import Registry
-
+from .build import META_ARCH_REGISTRY
 from ..backbone import Backbone, build_backbone
 from ..postprocessing import sem_seg_postprocess
-from .build import META_ARCH_REGISTRY
 
 __all__ = [
     "SemanticSegmentor",
@@ -21,7 +21,6 @@ __all__ = [
     "SemSegFPNHead",
     "build_sem_seg_head",
 ]
-
 
 SEM_SEG_HEADS_REGISTRY = Registry("SEM_SEG_HEADS")
 SEM_SEG_HEADS_REGISTRY.__doc__ = """
@@ -38,12 +37,12 @@ class SemanticSegmentor(nn.Module):
 
     @configurable
     def __init__(
-        self,
-        *,
-        backbone: Backbone,
-        sem_seg_head: nn.Module,
-        pixel_mean: Tuple[float],
-        pixel_std: Tuple[float],
+            self,
+            *,
+            backbone: Backbone,
+            sem_seg_head: nn.Module,
+            pixel_mean: Tuple[float],
+            pixel_std: Tuple[float],
     ):
         """
         Args:
@@ -104,7 +103,8 @@ class SemanticSegmentor(nn.Module):
         features = self.backbone(images.tensor)
 
         if "sem_seg" in batched_inputs[0]:
-            targets = [x["sem_seg"].to(self.device) for x in batched_inputs]
+            targets = [(x["sem_seg"] / 255 * 2).type(torch.LongTensor).to(self.device) for x in batched_inputs]
+            # targets = [x.type(torch.LongTensor).to(self.device) for x in targets]  # Custom
             targets = ImageList.from_tensors(
                 targets, self.backbone.size_divisibility, self.sem_seg_head.ignore_value
             ).tensor
@@ -144,15 +144,15 @@ class SemSegFPNHead(nn.Module):
 
     @configurable
     def __init__(
-        self,
-        input_shape: Dict[str, ShapeSpec],
-        *,
-        num_classes: int,
-        conv_dims: int,
-        common_stride: int,
-        loss_weight: float = 1.0,
-        norm: Optional[Union[str, Callable]] = None,
-        ignore_value: int = -1,
+            self,
+            input_shape: Dict[str, ShapeSpec],
+            *,
+            num_classes: int,
+            conv_dims: int,
+            common_stride: int,
+            loss_weight: float = 1.0,
+            norm: Optional[Union[str, Callable]] = None,
+            ignore_value: int = -1,
     ):
         """
         NOTE: this interface is experimental.
@@ -180,7 +180,7 @@ class SemSegFPNHead(nn.Module):
 
         self.scale_heads = []
         for in_feature, stride, channels in zip(
-            self.in_features, feature_strides, feature_channels
+                self.in_features, feature_strides, feature_channels
         ):
             head_ops = []
             head_length = max(1, int(np.log2(stride) - np.log2(self.common_stride)))
@@ -254,7 +254,7 @@ class SemSegFPNHead(nn.Module):
             align_corners=False,
         )
 
-        # targets = torch.reshape(targets, [1, 512, 512])
+        # targets = targets.type(torch.LongTensor).to(self.device)
 
         loss = F.cross_entropy(
             predictions, targets, reduction="mean", ignore_index=self.ignore_value
