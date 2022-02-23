@@ -9,7 +9,7 @@ MODEL:
     NUM_CLASSES: 3
     TRAIN_NUM_POINTS: 2048
     SUBDIVISION_NUM_POINTS: 8192
-  DEVICE: "cpu"
+  DEVICE: "cuda"
 DATASETS:
   TRAIN: ("floorplans_sem_seg_train",)
   TEST: ("floorplans_sem_seg_val",)
