@@ -126,11 +126,13 @@ def main(args):
     DatasetCatalog.register(
         "floorplans_sem_seg_train", lambda subset='train': load_semantic(subset)
     )
-    MetadataCatalog.get("floorplans_sem_seg_train").set(evaluator_type="sem_seg", stuff_classes=stuff_classes, stuff_colors=stuff_colors)
+    MetadataCatalog.get("floorplans_sem_seg_train").set(evaluator_type="sem_seg", stuff_classes=stuff_classes,
+                                                        stuff_colors=stuff_colors, ignore_value=cfg.IGNORE_VALUE)
     DatasetCatalog.register(
         "floorplans_sem_seg_val", lambda subset='val': load_semantic(subset)
     )
-    MetadataCatalog.get("floorplans_sem_seg_val").set(evaluator_type="sem_seg", stuff_classes=stuff_classes, stuff_colors=stuff_colors)
+    MetadataCatalog.get("floorplans_sem_seg_val").set(evaluator_type="sem_seg", stuff_classes=stuff_classes,
+                                                      stuff_colors=stuff_colors, ignore_value=cfg.IGNORE_VALUE)
 
     if args.eval_only:
         model = Trainer.build_model(cfg)
