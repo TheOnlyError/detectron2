@@ -133,8 +133,8 @@ def main(args):
     )
     MetadataCatalog.get("floorplans_sem_seg_val").set(evaluator_type="sem_seg", stuff_classes=stuff_classes,
                                                       stuff_colors=stuff_colors, ignore_value=cfg.MODEL.SEM_SEG_HEAD.IGNORE_VALUE, ignore_label='bg')
-
-    if args.eval_only:
+    predict = True
+    if predict:
         model = Trainer.build_model(cfg)
         DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
             cfg.MODEL.WEIGHTS, resume=args.resume
