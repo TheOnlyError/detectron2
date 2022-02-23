@@ -7,7 +7,8 @@ PointRend Training Script.
 This script is a simplified version of the training script in detectron2/tools.
 """
 
-import os, sys
+import os
+import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
@@ -28,6 +29,7 @@ from detectron2.evaluation import (
     verify_results,
 )
 from detectron2.projects.point_rend import ColorAugSSDTransform, add_pointrend_config
+
 
 def build_sem_seg_train_aug(cfg):
     augs = [
@@ -122,9 +124,11 @@ def main(args):
     DatasetCatalog.register(
         "floorplans_sem_seg_train", lambda subset='train': load_semantic(subset)
     )
+    MetadataCatalog.get("floorplans_sem_seg_train").set(evaluator_type="sem_seg")
     DatasetCatalog.register(
         "floorplans_sem_seg_val", lambda subset='val': load_semantic(subset)
     )
+    MetadataCatalog.get("floorplans_sem_seg_val").set(evaluator_type="sem_seg")
 
     if args.eval_only:
         model = Trainer.build_model(cfg)
