@@ -121,18 +121,18 @@ def setup(args):
 def main(args):
     cfg = setup(args)
 
-    stuff_classes = ['background', 'opening', 'wall']
-    stuff_colors = [(0, 0, 0), (1, 1, 1), (2, 2, 2)]
+    stuff_classes = ['opening', 'wall']
+    stuff_colors = [(1, 1, 1), (2, 2, 2)]
     DatasetCatalog.register(
         "floorplans_sem_seg_train", lambda subset='train': load_semantic(subset)
     )
     MetadataCatalog.get("floorplans_sem_seg_train").set(evaluator_type="sem_seg", stuff_classes=stuff_classes,
-                                                        stuff_colors=stuff_colors, ignore_value=cfg.MODEL.SEM_SEG_HEAD.IGNORE_VALUE)
+                                                        stuff_colors=stuff_colors, ignore_value=cfg.MODEL.SEM_SEG_HEAD.IGNORE_VALUE, ignore_label='bg')
     DatasetCatalog.register(
         "floorplans_sem_seg_val", lambda subset='val': load_semantic(subset)
     )
     MetadataCatalog.get("floorplans_sem_seg_val").set(evaluator_type="sem_seg", stuff_classes=stuff_classes,
-                                                      stuff_colors=stuff_colors, ignore_value=cfg.MODEL.SEM_SEG_HEAD.IGNORE_VALUE)
+                                                      stuff_colors=stuff_colors, ignore_value=cfg.MODEL.SEM_SEG_HEAD.IGNORE_VALUE, ignore_label='bg')
 
     if args.eval_only:
         model = Trainer.build_model(cfg)
