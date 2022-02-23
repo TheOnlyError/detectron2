@@ -51,6 +51,8 @@ class SemSegEvaluator(DatasetEvaluator):
         self._distributed = distributed
         self._output_dir = output_dir
 
+        print(os.listdir())
+
         self._cpu_device = torch.device("cpu")
 
         self.input_file_to_gt_file = {

@@ -42,8 +42,6 @@ def verify_results(cfg, results):
     if not len(expected_results):
         return True
 
-    print(os.listdir())
-
     ok = True
     for task, metric, expected, tolerance in expected_results:
         actual = results[task].get(metric, None)
