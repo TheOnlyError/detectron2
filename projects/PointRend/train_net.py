@@ -9,6 +9,9 @@ This script is a simplified version of the training script in detectron2/tools.
 
 import os
 import sys
+import time
+
+import torch
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
@@ -16,7 +19,8 @@ import detectron2.data.transforms as T
 import detectron2.utils.comm as comm
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.config import get_cfg
-from detectron2.data import DatasetMapper, MetadataCatalog, build_detection_train_loader, DatasetCatalog
+from detectron2.data import DatasetMapper, MetadataCatalog, build_detection_train_loader, DatasetCatalog, \
+    build_detection_test_loader
 from floorplans import load_semantic
 from detectron2.engine import DefaultTrainer, default_argument_parser, default_setup, launch
 from detectron2.evaluation import (
@@ -28,6 +32,8 @@ from detectron2.evaluation import (
     SemSegEvaluator,
     verify_results,
 )
+import matplotlib.image as mpimg
+import numpy as np
 from detectron2.projects.point_rend import ColorAugSSDTransform, add_pointrend_config
 
 
@@ -133,16 +139,44 @@ def main(args):
     )
     MetadataCatalog.get("floorplans_sem_seg_val").set(evaluator_type="sem_seg", stuff_classes=stuff_classes,
                                                       stuff_colors=stuff_colors, ignore_value=cfg.MODEL.SEM_SEG_HEAD.IGNORE_VALUE, ignore_label='bg')
+
     predict = True
     if predict:
         model = Trainer.build_model(cfg)
-        DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
-            cfg.MODEL.WEIGHTS, resume=args.resume
+        DetectionCheckpointer(model, save_dir="../../output").resume_or_load(
+            cfg.MODEL.WEIGHTS, resume=False
         )
-        res = Trainer.test(cfg, model)
-        if comm.is_main_process():
-            verify_results(cfg, res)
-        return res
+
+        model.eval()
+        data_loader = build_detection_test_loader(cfg, "floorplans_sem_seg_val")
+        samples = 2
+        i = 0
+        for idx, inputs in enumerate(data_loader):
+            result = model(inputs)[0]['sem_seg'].cpu().detach().numpy()
+            result = np.moveaxis(result, 0, -1)
+            # result = result.argmax(axis=-1)
+            result[result == 1] = 10
+            result[result == 0] = 20
+            result[result == 2] = 30
+
+            timestr = time.strftime("%Y%m%d-%H%M%S")
+            mpimg.imsave("result" + timestr + str(i) + "_input_pointrend.jpg", np.moveaxis(inputs[0]["image"].cpu().detach().numpy(), 0, -1))
+            mpimg.imsave("result" + timestr + str(i) + "_mask_pointrend.jpg", inputs[0]["sem_seg"])
+            mpimg.imsave("result" + timestr + str(i) + "_pointrend.jpg", result.astype(np.uint8))
+
+            i += 1
+            if i == samples:
+                break
+        return
+
+        # DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
+        #     cfg.MODEL.WEIGHTS, resume=args.resume
+        # )
+        # res = Trainer.test(cfg, model)
+        # if comm.is_main_process():
+        #     verify_results(cfg, res)
+        # return res
+
 
     trainer = Trainer(cfg)
     trainer.resume_or_load(resume=args.resume)
