@@ -1,7 +1,7 @@
 _BASE_: Base-PointRend-Semantic-FPN.yaml
 MODEL:
   RESNETS:
-    DEPTH: 50
+    DEPTH: 101
   SEM_SEG_HEAD:
     NUM_CLASSES: 3
     IGNORE_VALUE: 0
@@ -14,10 +14,10 @@ DATASETS:
   TRAIN: ("floorplans_sem_seg_train",)
   TEST: ("floorplans_sem_seg_val",)
 SOLVER:
-  BASE_LR: 0.001
+  BASE_LR: 0.0001
   IMS_PER_BATCH: 1
   STEPS: (40000, 55000)
-  MAX_ITER: 60000
+  MAX_ITER: 160000
 INPUT:
   MIN_SIZE_TRAIN: (512,)
   MIN_SIZE_TRAIN_SAMPLING: "choice"

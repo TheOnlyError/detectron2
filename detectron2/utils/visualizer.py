@@ -451,8 +451,8 @@ class Visualizer:
         labels, areas = np.unique(sem_seg, return_counts=True)
         sorted_idxs = np.argsort(-areas).tolist()
         labels = labels[sorted_idxs]
-        labels = np.array(labels/255 * 2, dtype=np.int32)
-        ddd = list(filter(lambda l: l < len(self.metadata.stuff_classes), labels))
+        labels = np.array(labels, dtype=np.int32)
+        # ddd = list(filter(lambda l: l < len(self.metadata.stuff_classes), labels))
         for label in filter(lambda l: l < len(self.metadata.stuff_classes), labels):
             try:
                 mask_color = [x / 255 for x in self.metadata.stuff_colors[label]]
@@ -460,7 +460,7 @@ class Visualizer:
                 mask_color = None
 
 
-            binary_mask = (sem_seg == min(255, label*128)).astype(np.uint8)
+            binary_mask = (sem_seg == label).astype(np.uint8)
             text = self.metadata.stuff_classes[label]
             self.draw_binary_mask(
                 binary_mask,

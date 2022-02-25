@@ -103,7 +103,8 @@ class SemanticSegmentor(nn.Module):
         features = self.backbone(images.tensor)
 
         if "sem_seg" in batched_inputs[0]:
-            targets = [(x["sem_seg"] / 255 * 2).type(torch.LongTensor).to(self.device) for x in batched_inputs]
+            # targets = [(x["sem_seg"] / 255 * 2).type(torch.LongTensor).to(self.device) for x in batched_inputs]
+            targets = [(x["sem_seg"]).type(torch.LongTensor).to(self.device) for x in batched_inputs]
             # targets = [x.type(torch.LongTensor).to(self.device) for x in targets]  # Custom
             targets = ImageList.from_tensors(
                 targets, self.backbone.size_divisibility, self.sem_seg_head.ignore_value

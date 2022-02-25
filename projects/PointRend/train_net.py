@@ -125,7 +125,7 @@ def setup(args):
 def main(args):
     cfg = setup(args)
 
-    path = "../../output2"
+    path = "../../output3"
 
     resources = False
     if resources:
