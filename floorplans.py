@@ -236,7 +236,7 @@ if __name__ == "__main__":
     logger.info("Done loading {} samples.".format(len(dicts)))
 
     stuff_classes = ['bg', 'opening', 'wall']
-    stuff_colors = [(0, 0, 0), (128, 128, 128), (255, 255, 255)]
+    stuff_colors = [(0, 0, 0), (1, 1, 1), (2, 2, 2)]
     meta = Metadata().set(stuff_classes=stuff_classes,
                           stuff_colors=stuff_colors,
                           ignore_value=0,

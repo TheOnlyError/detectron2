@@ -1,7 +1,7 @@
 _BASE_: Base-PointRend-Semantic-FPN.yaml
 MODEL:
   RESNETS:
-    DEPTH: 101
+    DEPTH: 50
   SEM_SEG_HEAD:
     NUM_CLASSES: 3
     IGNORE_VALUE: 0
