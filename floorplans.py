@@ -1,17 +1,16 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 import logging
-import os, sys
+import os
 import random
-
-# sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
 import matplotlib.image as mpimg
 import numpy as np
 from PIL import Image
-from cityscapesscripts.helpers.labels import Label
 
 from detectron2.utils.file_io import PathManager
 from detectron2.utils.logger import setup_logger
+
+# sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
 try:
     import cv2  # noqa
@@ -236,9 +235,12 @@ if __name__ == "__main__":
     dicts = load_semantic('val')
     logger.info("Done loading {} samples.".format(len(dicts)))
 
-    stuff_classes = ['background', 'opening', 'wall']
+    stuff_classes = ['bg', 'opening', 'wall']
     stuff_colors = [(0, 0, 0), (128, 128, 128), (255, 255, 255)]
-    meta = Metadata().set(stuff_classes=stuff_classes, stuff_colors=stuff_colors)
+    meta = Metadata().set(stuff_classes=stuff_classes,
+                          stuff_colors=stuff_colors,
+                          ignore_value=0,
+                          ignore_label='bg')
 
     for d in dicts:
         img = np.array(Image.open(PathManager.open(d["file_name"], "rb")))

@@ -165,8 +165,8 @@ def main(args):
             mpimg.imsave("result" + timestr + str(i) + "_pointrend.jpg", result.astype(np.uint8))
         return
 
-    stuff_classes = ['opening', 'wall']
-    stuff_colors = [(1, 1, 1), (2, 2, 2)]
+    stuff_classes = ['bg', 'opening', 'wall']
+    stuff_colors = [(0, 0, 0), (128, 128, 128), (255, 255, 255)]
     DatasetCatalog.register(
         "floorplans_sem_seg_train", lambda subset='train': load_semantic(subset)
     )
