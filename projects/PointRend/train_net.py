@@ -12,6 +12,7 @@ import sys
 import time
 
 import torch
+from torchvision.transforms import transforms
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
@@ -127,6 +128,44 @@ def setup(args):
 def main(args):
     cfg = setup(args)
 
+    resources = False
+    if resources:
+        model = Trainer.build_model(cfg)
+        DetectionCheckpointer(model, save_dir="../../output").resume_or_load(
+            cfg.MODEL.WEIGHTS, resume=False
+        )
+        model.eval()
+        single = mpimg.imread('../../resources/single.jpg')
+        multi = mpimg.imread('../../resources/multi.jpg')
+        # image = mpimg.imread('resources/multi_large.jpg')
+        # image = mpimg.imread('resources/multi_largest.jpg')
+        # m_sampled = mpimg.imread('../../resources/m_sampled.jpg')
+        # m_sampled2 = mpimg.imread('../../resources/m_sampled2.jpg')
+        # mplan_s = mpimg.imread('../../resources/mplan_s.jpg')
+        images = [single, multi]
+        size = 512
+        trans = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Resize((size, size))
+        ])
+        for i, image in enumerate(images):
+            image = trans(image)
+            inputs = [{
+                'image': image,
+                'sem_seg': trans(np.random.random((size, size)))
+            }]
+
+            result = model(inputs)[0]['sem_seg'].cpu().detach().numpy()
+            result = np.moveaxis(result, 0, -1)
+            result = result.argmax(axis=-1)
+            # result[result == 1] = 10
+            # result[result == 0] = 20
+            # result[result == 2] = 30
+
+            timestr = time.strftime("%Y%m%d-%H%M%S")
+            mpimg.imsave("result" + timestr + str(i) + "_pointrend.jpg", result.astype(np.uint8))
+        return
+
     stuff_classes = ['opening', 'wall']
     stuff_colors = [(1, 1, 1), (2, 2, 2)]
     DatasetCatalog.register(
@@ -140,7 +179,7 @@ def main(args):
     MetadataCatalog.get("floorplans_sem_seg_val").set(evaluator_type="sem_seg", stuff_classes=stuff_classes,
                                                       stuff_colors=stuff_colors, ignore_value=cfg.MODEL.SEM_SEG_HEAD.IGNORE_VALUE, ignore_label='bg')
 
-    predict = True
+    predict = False
     if predict:
         model = Trainer.build_model(cfg)
         DetectionCheckpointer(model, save_dir="../../output").resume_or_load(
@@ -148,13 +187,13 @@ def main(args):
         )
 
         model.eval()
-        data_loader = build_detection_test_loader(cfg, "floorplans_sem_seg_val")
+        data_loader = build_detection_test_loader(cfg, "floorplans_sem_seg_train")
         samples = 2
         i = 0
         for idx, inputs in enumerate(data_loader):
             result = model(inputs)[0]['sem_seg'].cpu().detach().numpy()
             result = np.moveaxis(result, 0, -1)
-            # result = result.argmax(axis=-1)
+            result = result.argmax(axis=-1)
             result[result == 1] = 10
             result[result == 0] = 20
             result[result == 2] = 30
