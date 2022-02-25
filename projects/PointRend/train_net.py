@@ -171,18 +171,14 @@ def main(args):
         "floorplans_sem_seg_train", lambda subset='train': load_semantic(subset)
     )
     MetadataCatalog.get("floorplans_sem_seg_train").set(evaluator_type="sem_seg", stuff_classes=stuff_classes,
-                                                        stuff_colors=stuff_colors,
-                                                        ignore_value=cfg.MODEL.SEM_SEG_HEAD.IGNORE_VALUE,
-                                                        ignore_label='bg')
+                                                        stuff_colors=stuff_colors)
     DatasetCatalog.register(
         "floorplans_sem_seg_val", lambda subset='val': load_semantic(subset)
     )
     MetadataCatalog.get("floorplans_sem_seg_val").set(evaluator_type="sem_seg", stuff_classes=stuff_classes,
-                                                      stuff_colors=stuff_colors,
-                                                      ignore_value=cfg.MODEL.SEM_SEG_HEAD.IGNORE_VALUE,
-                                                      ignore_label='bg')
+                                                      stuff_colors=stuff_colors)
 
-    predict = False
+    predict = True
     if predict:
         model = Trainer.build_model(cfg)
         DetectionCheckpointer(model, save_dir=path).resume_or_load(
