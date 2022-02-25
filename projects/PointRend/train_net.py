@@ -178,7 +178,7 @@ def main(args):
     MetadataCatalog.get("floorplans_sem_seg_val").set(evaluator_type="sem_seg", stuff_classes=stuff_classes,
                                                       stuff_colors=stuff_colors)
 
-    predict = True
+    predict = False
     if predict:
         model = Trainer.build_model(cfg)
         DetectionCheckpointer(model, save_dir=path).resume_or_load(
