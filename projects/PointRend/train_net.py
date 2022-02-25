@@ -11,13 +11,11 @@ import os
 import sys
 import time
 
-import torch
 from torchvision.transforms import transforms
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 
 import detectron2.data.transforms as T
-import detectron2.utils.comm as comm
 from detectron2.checkpoint import DetectionCheckpointer
 from detectron2.config import get_cfg
 from detectron2.data import DatasetMapper, MetadataCatalog, build_detection_train_loader, DatasetCatalog, \
@@ -31,7 +29,6 @@ from detectron2.evaluation import (
     DatasetEvaluators,
     LVISEvaluator,
     SemSegEvaluator,
-    verify_results,
 )
 import matplotlib.image as mpimg
 import numpy as np
@@ -128,11 +125,13 @@ def setup(args):
 def main(args):
     cfg = setup(args)
 
+    path = "../../output2"
+
     resources = False
     if resources:
         model = Trainer.build_model(cfg)
-        DetectionCheckpointer(model, save_dir="../../output").resume_or_load(
-            cfg.MODEL.WEIGHTS, resume=False
+        DetectionCheckpointer(model, save_dir=path).resume_or_load(
+            cfg.MODEL.WEIGHTS, resume=True
         )
         model.eval()
         single = mpimg.imread('../../resources/single.jpg')
@@ -158,9 +157,9 @@ def main(args):
             result = model(inputs)[0]['sem_seg'].cpu().detach().numpy()
             result = np.moveaxis(result, 0, -1)
             result = result.argmax(axis=-1)
-            # result[result == 1] = 10
-            # result[result == 0] = 20
-            # result[result == 2] = 30
+            result[result == 1] = 10
+            result[result == 0] = 20
+            result[result == 2] = 30
 
             timestr = time.strftime("%Y%m%d-%H%M%S")
             mpimg.imsave("result" + timestr + str(i) + "_pointrend.jpg", result.astype(np.uint8))
@@ -172,18 +171,22 @@ def main(args):
         "floorplans_sem_seg_train", lambda subset='train': load_semantic(subset)
     )
     MetadataCatalog.get("floorplans_sem_seg_train").set(evaluator_type="sem_seg", stuff_classes=stuff_classes,
-                                                        stuff_colors=stuff_colors, ignore_value=cfg.MODEL.SEM_SEG_HEAD.IGNORE_VALUE, ignore_label='bg')
+                                                        stuff_colors=stuff_colors,
+                                                        ignore_value=cfg.MODEL.SEM_SEG_HEAD.IGNORE_VALUE,
+                                                        ignore_label='bg')
     DatasetCatalog.register(
         "floorplans_sem_seg_val", lambda subset='val': load_semantic(subset)
     )
     MetadataCatalog.get("floorplans_sem_seg_val").set(evaluator_type="sem_seg", stuff_classes=stuff_classes,
-                                                      stuff_colors=stuff_colors, ignore_value=cfg.MODEL.SEM_SEG_HEAD.IGNORE_VALUE, ignore_label='bg')
+                                                      stuff_colors=stuff_colors,
+                                                      ignore_value=cfg.MODEL.SEM_SEG_HEAD.IGNORE_VALUE,
+                                                      ignore_label='bg')
 
     predict = False
     if predict:
         model = Trainer.build_model(cfg)
-        DetectionCheckpointer(model, save_dir="../../output").resume_or_load(
-            cfg.MODEL.WEIGHTS, resume=False
+        DetectionCheckpointer(model, save_dir=path).resume_or_load(
+            cfg.MODEL.WEIGHTS, resume=True
         )
 
         model.eval()
@@ -199,7 +202,8 @@ def main(args):
             result[result == 2] = 30
 
             timestr = time.strftime("%Y%m%d-%H%M%S")
-            mpimg.imsave("result" + timestr + str(i) + "_input_pointrend.jpg", np.moveaxis(inputs[0]["image"].cpu().detach().numpy(), 0, -1))
+            mpimg.imsave("result" + timestr + str(i) + "_input_pointrend.jpg",
+                         np.moveaxis(inputs[0]["image"].cpu().detach().numpy(), 0, -1))
             mpimg.imsave("result" + timestr + str(i) + "_mask_pointrend.jpg", inputs[0]["sem_seg"])
             mpimg.imsave("result" + timestr + str(i) + "_pointrend.jpg", result.astype(np.uint8))
 
@@ -215,7 +219,6 @@ def main(args):
         # if comm.is_main_process():
         #     verify_results(cfg, res)
         # return res
-
 
     trainer = Trainer(cfg)
     trainer.resume_or_load(resume=args.resume)
