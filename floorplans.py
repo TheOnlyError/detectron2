@@ -36,8 +36,8 @@ def load_semantic(subset):
     ret = []
 
     subpath = ''
-    # path = subpath + "rooms_augment_mask/"
-    path = subpath + "rooms_buildings_mask/"
+    dir = "rooms_buildings_mask" # rooms_augment_mask
+    path = subpath + dir + '/'
     files = os.listdir(path)
     files_set = []
     for file in files:
@@ -52,11 +52,11 @@ def load_semantic(subset):
         files_set = files_set[train_size:]
     for image_id in files_set:
         id = int(image_id)
-        shp = mpimg.imread(subpath + 'rooms_augment_mask/{}.jpg'.format(id)).shape
+        shp = mpimg.imread(subpath + dir + '/{}.jpg'.format(id)).shape
         ret.append(
             {
-                "file_name": subpath + 'rooms_augment_mask/{}.jpg'.format(id),
-                "sem_seg_file_name": subpath + 'rooms_augment_mask/{}_mask.png'.format(id),
+                "file_name": subpath + dir + '/{}.jpg'.format(id),
+                "sem_seg_file_name": subpath + dir + '/{}_mask.png'.format(id),
                 "height": shp[0],
                 "width": shp[1],
             }
