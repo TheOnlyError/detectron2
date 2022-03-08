@@ -11,6 +11,8 @@ import os
 import sys
 import time
 
+import cv2
+import torch
 from torchvision.transforms import transforms
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
@@ -125,7 +127,7 @@ def setup(args):
 def main(args):
     cfg = setup(args)
 
-    path = "../../output3"
+    path = "../../output4"
 
     resources = False
     if resources:
@@ -138,20 +140,19 @@ def main(args):
         multi = mpimg.imread('../../resources/multi.jpg')
         # image = mpimg.imread('resources/multi_large.jpg')
         # image = mpimg.imread('resources/multi_largest.jpg')
-        # m_sampled = mpimg.imread('../../resources/m_sampled.jpg')
-        # m_sampled2 = mpimg.imread('../../resources/m_sampled2.jpg')
-        # mplan_s = mpimg.imread('../../resources/mplan_s.jpg')
-        images = [single, multi]
-        size = 512
-        trans = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Resize((size, size))
-        ])
+        m_sampled = mpimg.imread('../../resources/m_sampled.jpg')
+        m_sampled2 = mpimg.imread('../../resources/m_sampled2.jpg')
+        mplan_s = mpimg.imread('../../resources/mplan_s.jpg')
+        images = [mplan_s]
+        # size = 512
+        # trans = transforms.Compose([
+        #     transforms.Resize((size, size))
+        # ])
         for i, image in enumerate(images):
-            image = trans(image)
+            # image = cv2.resize(image, (size,size))
             inputs = [{
-                'image': image,
-                'sem_seg': trans(np.random.random((size, size)))
+                'image': torch.from_numpy(np.moveaxis(image, -1, 0)),
+                'sem_seg': torch.from_numpy(image[:, :, 0])
             }]
 
             result = model(inputs)[0]['sem_seg'].cpu().detach().numpy()

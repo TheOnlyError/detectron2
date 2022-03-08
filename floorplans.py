@@ -36,7 +36,8 @@ def load_semantic(subset):
     ret = []
 
     subpath = ''
-    path = subpath + "rooms_augment_mask/"
+    # path = subpath + "rooms_augment_mask/"
+    path = subpath + "rooms_buildings_mask/"
     files = os.listdir(path)
     files_set = []
     for file in files:
@@ -44,7 +45,7 @@ def load_semantic(subset):
     files_set = list(dict.fromkeys(files_set))
     random.shuffle(files_set)
 
-    train_size = int(0.8 * len(files_set))
+    train_size = int(0.78 * len(files_set))
     if subset == 'train':
         files_set = files_set[:train_size]
     else:
